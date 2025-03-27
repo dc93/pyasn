@@ -1,0 +1,5 @@
+requests>=2.25.0
+colorama>=0.4.4
+tabulate>=0.8.7
+dnspython>=2.1.0
+pyyaml>=6.0
