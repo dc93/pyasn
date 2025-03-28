@@ -148,7 +148,7 @@ class Cache:
             Path to cache file
         """
         # Hash the key if it contains characters that would be invalid in a filename:
-        if any(c in key for c in r'<>:"/\|?*'):":
+        if any(c in key for c in r'<>:"/\|?*'):
             import hashlib
             hashed_key = hashlib.md5(key.encode()).hexdigest()
             return self.cache_dir / f"{hashed_key}.cache"
