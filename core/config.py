@@ -184,7 +184,7 @@ class Config:
             config_file = self.config_dir / "config.yaml"
         
         try:
-            # Create parent directory if it doesn't exist
+            # Create parent directory if it doesn't exist'
             config_file.parent.mkdir(exist_ok=True, parents=True)
             
             # Save configuration

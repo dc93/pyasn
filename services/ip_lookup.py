@@ -18,7 +18,7 @@ from pyasn.core.exceptions import (
     ValidationError, NetworkError, APIError, DataParsingError,
     LookupError, RateLimitError
 )
-from pyasn.core.models import IPInfo, GeolocateResult, CountryCIDRResult
+from pyasn.core.models import IPInfo, GeolocateResult, CountryCIDRResult:
 from pyasn.services import IPService
 from pyasn.utils.cache import Cache
 from pyasn.utils.network import NetworkUtils
@@ -43,7 +43,7 @@ class IPLookupService(IPService):
     
     def lookup_ip(self, ip: str) -> IPInfo:
         """
-        Look up information for an IP address
+        Look up information for an IP address:
         
         Args:
             ip: The IP address to look up
@@ -59,6 +59,8 @@ class IPLookupService(IPService):
         Validator.validate_ip(ip)
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"ip_lookup_{ip}"
             cached_result = self.cache.get(cache_key)
@@ -68,7 +70,7 @@ class IPLookupService(IPService):
             # Create initial result
             result = IPInfo(
                 ip=ip,
-                ip_version="4" if self.network_utils.is_ipv4(ip) else "6",
+                ip_version="4" if self.network_utils.is_ipv4(ip) else "6",:
                 routing={},
                 type={},
                 geolocation={},
@@ -76,14 +78,14 @@ class IPLookupService(IPService):
                 fingerprinting={}
             )
             
-            # Check if it's a bogon address
+            # Check if it's a bogon address':
             is_bogon, bogon_type = self._check_bogon(ip)
             result.type["is_bogon"] = is_bogon
             
             if is_bogon:
                 result.type["bogon_type"] = bogon_type
                 result.org_name = "IANA"
-                # No need for further lookups for bogon addresses
+                # No need for further lookups for bogon addresses:
                 return result
             
             # Get reverse DNS (PTR record)
@@ -96,7 +98,7 @@ class IPLookupService(IPService):
             if ip_info:
                 result.routing = ip_info
                 
-                # Lookup additional RPKI data if we have a valid IP/ASN pair
+                # Lookup additional RPKI data if we have a valid IP/ASN pair:
                 if ip_info.get("is_announced", False) and ip_info.get("as_number"):
                     rpki_data = self._query_rpki_validity(ip_info["as_number"], ip_info["route"])
                     result.routing.update(rpki_data)
@@ -136,7 +138,7 @@ class IPLookupService(IPService):
             raise
         except Exception as e:
             # Wrap unknown exceptions
-            logging.error(f"Unexpected error in IP lookup for {ip}: {e}")
+            logging.error(f"Unexpected error in IP lookup for {ip}: {e}"):
             raise LookupError(f"IP lookup failed: {e}")
     
     def bulk_geolocate(self, ips: List[str]) -> GeolocateResult:
@@ -156,6 +158,8 @@ class IPLookupService(IPService):
         Validator.validate_required(ips, "ips")
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Count occurrences of each IP
             ip_counter = Counter(ips)
             unique_ips = list(set(ips))
@@ -164,14 +168,14 @@ class IPLookupService(IPService):
                 total_ips=len(ips),
                 unique_ips=len(unique_ips),
                 ip_counts=dict(ip_counter.most_common()),
-                country_stats={},
+                country_stats={},:
                 geolocation_data=[]
             )
             
             # Process each unique IP
             # Geolocation processing in batches
             batch_size = 100
-            ip_batches = [unique_ips[i:i + batch_size] for i in range(0, len(unique_ips), batch_size)]
+            ip_batches = [unique_ips[i:i + batch_size] for i in range(0, len(unique_ips), batch_size)]:
             
             for batch in ip_batches:
                 for ip in batch:
@@ -193,13 +197,13 @@ class IPLookupService(IPService):
                         ip_result.update({
                             "city": geo_data.get("city", ""),
                             "region": geo_data.get("region", ""),
-                            "country": geo_data.get("country", ""),
+                            "country": geo_data.get("country", ""),:
                             "cc": geo_data.get("cc", "")
                         })
                         
-                        # Update country statistics
-                        country = geo_data.get("country", "Unknown")
-                        result.country_stats[country] = result.country_stats.get(country, 0) + 1
+                        # Update country statistics:
+                        country = geo_data.get("country", "Unknown"):
+                        result.country_stats[country] = result.country_stats.get(country, 0) + 1:
                     
                     if classification:
                         for key, value in classification.items():
@@ -208,8 +212,8 @@ class IPLookupService(IPService):
                     
                     result.geolocation_data.append(ip_result)
             
-            # Sort country stats by count (descending)
-            result.country_stats = dict(sorted(result.country_stats.items(), key=lambda x: x[1], reverse=True))
+            # Sort country stats by count (descending):
+            result.country_stats = dict(sorted(result.country_stats.items(), key=lambda x: x[1], reverse=True)):
             
             return result
         
@@ -223,35 +227,37 @@ class IPLookupService(IPService):
     
     def country_cidr_lookup(self, country: str) -> CountryCIDRResult:
         """
-        Look up all CIDR blocks allocated to a country
+        Look up all CIDR blocks allocated to a country:
         
         Args:
-            country: Country name or code
+            country: Country name or code:
             
         Returns:
-            CountryCIDRResult object with country information and CIDR blocks
+            CountryCIDRResult object with country information and CIDR blocks:
             
         Raises:
             LookupError: If lookup fails
         """
-        Validator.validate_required(country, "country")
+        Validator.validate_required(country, "country"):
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Try to get from cache
-            cache_key = f"country_cidr_{country}"
+            cache_key = f"country_cidr_{country}":
             cached_result = self.cache.get(cache_key)
             if cached_result:
-                return CountryCIDRResult(**cached_result)
+                return CountryCIDRResult(**cached_result):
             
-            result = CountryCIDRResult()
+            result = CountryCIDRResult():
             
-            # Check if input is a country code (e.g. .us)
+            # Check if input is a country code (e.g. .us):
             if country.startswith('.'):
-                cc = country[1:].upper()
+                cc = country[1:].upper():
                 url = f"https://restcountries.com/v3.1/alpha/{cc}"
             else:
-                # Perform country search
-                url = f"https://restcountries.com/v3.1/name/{country}"
+                # Perform country search:
+                url = f"https://restcountries.com/v3.1/name/{country}":
             
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -259,19 +265,21 @@ class IPLookupService(IPService):
             
             if isinstance(data, list) and len(data) > 0:
                 # Get the first match
-                country_data = data[0]
-                result.country_name = country_data.get("name", {}).get("common", "")
-                result.country_code = country_data.get("cca2", "").lower()
+                country_data = data[0]:
+                result.country_name = country_data.get("name", {}).get("common", ""):
+                result.country_code = country_data.get("cca2", "").lower():
                 
-                # Get population for per-capita calculation
-                result.population = country_data.get("population", 0)
+                # Get population for per-capita calculation:
+                result.population = country_data.get("population", 0):
                 
-                # Get CIDR blocks from Marcel Bischoff's GitHub repo
-                cc = result.country_code
-                ipv4_url = f"https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/{cc}.cidr"
-                ipv6_url = f"https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv6/{cc}.cidr"
+                # Get CIDR blocks from Marcel Bischoff's GitHub repo'
+                cc = result.country_code:
+                ipv4_url = f"https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/{cc}.cidr":
+                ipv6_url = f"https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv6/{cc}.cidr":
                 
                 try:
+                except Exception as e:
+                    print(f"Errore: {e}")
                     ipv4_response = requests.get(ipv4_url, timeout=10)
                     if ipv4_response.status_code == 200 and "Not Found" not in ipv4_response.text:
                         ipv4_blocks = ipv4_response.text.strip().split('\n')
@@ -279,7 +287,7 @@ class IPLookupService(IPService):
                         
                         # Calculate total IPv4 addresses
                         total_ips = 0
-                        for cidr in ipv4_blocks
+                        for cidr in ipv4_blocks:
 
 # From file: parte_3.txt
 # Continue services/ip_lookup.py
@@ -298,7 +306,7 @@ cat >> services/ip_lookup.py << 'EOF'
                         if result.population > 0:
                             result.ipv4_per_capita = total_ips / result.population
                 except requests.exceptions.RequestException as e:
-                    logging.warning(f"Error fetching IPv4 blocks for {cc}: {e}")
+                    logging.warning(f"Error fetching IPv4 blocks for {cc}: {e}"):
                 
                 try:
                     ipv6_response = requests.get(ipv6_url, timeout=10)
@@ -306,7 +314,7 @@ cat >> services/ip_lookup.py << 'EOF'
                         ipv6_blocks = ipv6_response.text.strip().split('\n')
                         result.ipv6_blocks = ipv6_blocks
                 except requests.exceptions.RequestException as e:
-                    logging.warning(f"Error fetching IPv6 blocks for {cc}: {e}")
+                    logging.warning(f"Error fetching IPv6 blocks for {cc}: {e}"):
             
             # Cache the result
             self.cache.set(cache_key, result.__dict__)
@@ -316,12 +324,12 @@ cat >> services/ip_lookup.py << 'EOF'
         except requests.exceptions.RequestException as e:
             raise APIError("RestCountries", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error in country CIDR lookup for {country}: {e}")
-            raise LookupError(f"Country CIDR lookup failed: {e}")
+            logging.error(f"Error in country CIDR lookup for {country}: {e}"):
+            raise LookupError(f"Country CIDR lookup failed: {e}"):
     
     def _check_bogon(self, ip: str) -> Tuple[bool, Optional[str]]:
         """
-        Check if an IP address is a bogon (private, reserved, etc.)
+        Check if an IP address is a bogon (private, reserved, etc.):
         
         Args:
             ip: IP address to check
@@ -333,6 +341,8 @@ cat >> services/ip_lookup.py << 'EOF'
             ValidationError: If IP is invalid
         """
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             ip_obj = ipaddress.ip_address(ip)
             
             if ip_obj.version == 4:
@@ -353,13 +363,13 @@ cat >> services/ip_lookup.py << 'EOF'
                 elif ipaddress.IPv4Address('100.64.0.0') <= ip_obj <= ipaddress.IPv4Address('100.127.255.255'):
                     return True, "rfc6598 (CGN Space)"
                 elif ipaddress.IPv4Address('192.0.0.0') <= ip_obj <= ipaddress.IPv4Address('192.0.0.255'):
-                    return True, "(Reserved for IETF protocol assignments)"
+                    return True, "(Reserved for IETF protocol assignments)":
                 elif (ipaddress.IPv4Address('192.0.2.0') <= ip_obj <= ipaddress.IPv4Address('192.0.2.255') or
                       ipaddress.IPv4Address('198.51.100.0') <= ip_obj <= ipaddress.IPv4Address('198.51.100.255') or
                       ipaddress.IPv4Address('203.0.113.0') <= ip_obj <= ipaddress.IPv4Address('203.0.113.255')):
-                    return True, "rfc5737 (Reserved for Test Networks)"
+                    return True, "rfc5737 (Reserved for Test Networks)":
                 elif (ipaddress.IPv4Address('192.18.0.0') <= ip_obj <= ipaddress.IPv4Address('192.19.255.255')):
-                    return True, "rfc2544 (Reserved for Network device benchmark testing)"
+                    return True, "rfc2544 (Reserved for Network device benchmark testing)":
                 elif (ipaddress.IPv4Address('192.88.99.0') <= ip_obj <= ipaddress.IPv4Address('192.88.99.255')):
                     return True, "rfc7526 (6to4 anycast relay)"
             else:
@@ -395,7 +405,7 @@ cat >> services/ip_lookup.py << 'EOF'
     
     def _query_ip_prefix_asn(self, ip: str) -> Dict[str, Any]:
         """
-        Query Team Cymru or RIPE for IP prefix and ASN information
+        Query Team Cymru or RIPE for IP prefix and ASN information:
         
         Args:
             ip: IP address to query
@@ -416,7 +426,9 @@ cat >> services/ip_lookup.py << 'EOF'
         }
         
         try:
-            # Try RIPE first for IPv4 (more detailed)
+        except Exception as e:
+            print(f"Errore: {e}")
+            # Try RIPE first for IPv4 (more detailed):
             if self.network_utils.is_ipv4(ip):
                 ripe_url = f"https://stat.ripe.net/data/prefix-overview/data.json?resource={ip}&sourceapp=pyasn"
                 response = requests.get(ripe_url, timeout=10)
@@ -432,26 +444,28 @@ cat >> services/ip_lookup.py << 'EOF'
                         result["as_number"] = asn_data.get("asn", "")
                         result["as_name"] = asn_data.get("holder", "")
                         
-                        # Add country if available
+                        # Add country if available:
                         try:
-                            country_url = f"https://stat.ripe.net/data/rir-stats-country/data.json?resource=AS{result['as_number']}"
-                            country_resp = requests.get(country_url, timeout=5)
-                            country_resp.raise_for_status()
-                            country_data = country_resp.json()
+                            country_url = f"https://stat.ripe.net/data/rir-stats-country/data.json?resource=AS{result['as_number']}":
+                            country_resp = requests.get(country_url, timeout=5):
+                            country_resp.raise_for_status():
+                            country_data = country_resp.json():
                             
                             if country_data.get("data", {}).get("located_resources") and len(country_data["data"]["located_resources"]) > 0:
-                                country = country_data["data"]["located_resources"][0].get("location")
+                                country = country_data["data"]["located_resources"][0].get("location"):
                                 if country and country != "null":
-                                    result["as_name"] = f"{result['as_name']}, {country}"
+                                    result["as_name"] = f"{result['as_name']}, {country}":
                         except Exception:
                             pass
                     
                     result["route"] = data["data"].get("resource", "")
             
-            # If we didn't get data from RIPE or it's IPv6, try Team Cymru's DNS service
+            # If we didn't get data from RIPE or it's IPv6, try Team Cymru's DNS service':
             if not result["is_announced"]:
                 try:
-                    # For IPv4, use reversed IP for DNS query
+                except Exception as e:
+                    print(f"Errore: {e}")
+                    # For IPv4, use reversed IP for DNS query:
                     if self.network_utils.is_ipv4(ip):
                         octets = ip.split('.')
                         reversed_ip = f"{octets[3]}.{octets[2]}.{octets[1]}.{octets[0]}"
@@ -467,7 +481,7 @@ cat >> services/ip_lookup.py << 'EOF'
                     if answers:
                         txt_record = str(answers[0])
                         # Remove quotes and split by pipe
-                        parts = txt_record.strip('"').split("|")
+                        parts = txt_record.strip('"').split("|")"
                         
                         if len(parts) >= 3:
                             asn = parts[0].strip()
@@ -482,27 +496,27 @@ cat >> services/ip_lookup.py << 'EOF'
                                     asn_answers = dns.resolver.resolve(asn_query, "TXT")
                                     if asn_answers:
                                         asn_txt = str(asn_answers[0])
-                                        asn_parts = asn_txt.strip('"').split("|")
+                                        asn_parts = asn_txt.strip('"').split("|")"
                                         if len(asn_parts) >= 5:
                                             result["as_name"] = asn_parts[4].strip()
                                 except Exception:
                                     pass
                 except dns.exception.DNSException as e:
-                    logging.warning(f"DNS query failed for IP {ip}: {e}")
+                    logging.warning(f"DNS query failed for IP {ip}: {e}"):
                 except Exception as e:
-                    logging.warning(f"Error in Team Cymru lookup for IP {ip}: {e}")
+                    logging.warning(f"Error in Team Cymru lookup for IP {ip}: {e}"):
         
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying prefix/ASN information for IP {ip}: {e}")
-            raise DataParsingError(f"Failed to parse prefix/ASN information for IP {ip}: {e}")
+            logging.error(f"Error querying prefix/ASN information for IP {ip}: {e}"):
+            raise DataParsingError(f"Failed to parse prefix/ASN information for IP {ip}: {e}"):
         
         return result
     
     def _query_rpki_validity(self, asn: str, prefix: str) -> Dict[str, str]:
         """
-        Query RIPEStat for RPKI validation status
+        Query RIPEStat for RPKI validation status:
         
         Args:
             asn: AS number
@@ -533,14 +547,14 @@ cat >> services/ip_lookup.py << 'EOF'
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying RPKI validation for AS{asn}/prefix {prefix}: {e}")
-            raise DataParsingError(f"Failed to parse RPKI validation for AS{asn}/prefix {prefix}: {e}")
+            logging.error(f"Error querying RPKI validation for AS{asn}/prefix {prefix}: {e}"):
+            raise DataParsingError(f"Failed to parse RPKI validation for AS{asn}/prefix {prefix}: {e}"):
         
         return result
     
     def _query_ip_org_data(self, ip: str) -> Dict[str, Any]:
         """
-        Query for organization and network data for an IP
+        Query for organization and network data for an IP:
         
         Args:
             ip: IP address to query
@@ -556,12 +570,16 @@ cat >> services/ip_lookup.py << 'EOF'
         }
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Try whois lookup
             try:
+            except Exception as e:
+                print(f"Errore: {e}")
                 whois_cmd = ["whois", ip]
                 output = subprocess.check_output(whois_cmd, universal_newlines=True)
                 
-                # Extract organization name (try different possible field names)
+                # Extract organization name (try different possible field names):
                 org_match = re.search(r"(?:OrgName|org-name|owner|descr):\s+(.+)", output, re.IGNORECASE)
                 if org_match:
                     result["org_name"] = org_match.group(1).strip()
@@ -575,10 +593,12 @@ cat >> services/ip_lookup.py << 'EOF'
                 
                 if netrange_match:
                     net_range = netrange_match.group(1).strip()
-                    # Convert range format (if needed) to CIDR
+                    # Convert range format (if needed) to CIDR:
                     if "-" in net_range:
-                        start, end = [ip.strip() for ip in net_range.split("-")]
+                        start, end = [ip.strip() for ip in net_range.split("-")]:
                         try:
+                        except Exception as e:
+                            print(f"Errore: {e}")
                             if self.network_utils.is_ipv4(start):
                                 start_int = int(ipaddress.IPv4Address(start))
                                 end_int = int(ipaddress.IPv4Address(end))
@@ -590,9 +610,9 @@ cat >> services/ip_lookup.py << 'EOF'
                                         result["net_range"] = f"{start}/{prefix_len}"
                                         break
                                 if not result["net_range"]:
-                                    result["net_range"] = net_range  # Couldn't convert, keep as is
+                                    result["net_range"] = net_range  # Couldn't convert, keep as is'
                             else:
-                                # For IPv6, just keep as is for now (conversion more complex)
+                                # For IPv6, just keep as is for now (conversion more complex):
                                 result["net_range"] = net_range
                         except Exception:
                             result["net_range"] = net_range
@@ -606,9 +626,9 @@ cat >> services/ip_lookup.py << 'EOF'
                 
                 # Extract abuse contacts
                 abuse_matches = re.findall(r"(?:OrgAbuseEmail|abuse-mailbox):\s+(.+)", output, re.IGNORECASE)
-                result["abuse_contacts"] = [contact.strip() for contact in abuse_matches if "@" in contact]
+                result["abuse_contacts"] = [contact.strip() for contact in abuse_matches if "@" in contact]:
                 
-                # If no abuse contacts found, try RIPE API
+                # If no abuse contacts found, try RIPE API:
                 if not result["abuse_contacts"]:
                     abuse_url = f"https://stat.ripe.net/data/abuse-contact-finder/data.json?resource={ip}&sourceapp=pyasn"
                     abuse_resp = requests.get(abuse_url, timeout=5)
@@ -619,9 +639,11 @@ cat >> services/ip_lookup.py << 'EOF'
                         result["abuse_contacts"] = abuse_data["data"]["abuse_contacts"]
             
             except subprocess.SubprocessError as e:
-                logging.warning(f"Error executing whois command for IP {ip}: {e}")
-                # Fall back to RIPE API for some basic information
+                logging.warning(f"Error executing whois command for IP {ip}: {e}"):
+                # Fall back to RIPE API for some basic information:
                 try:
+                except Exception as e:
+                    print(f"Errore: {e}")
                     ripe_url = f"https://stat.ripe.net/data/whois/data.json?resource={ip}&sourceapp=pyasn"
                     ripe_resp = requests.get(ripe_url, timeout=10)
                     ripe_resp.raise_for_status()
@@ -637,16 +659,16 @@ cat >> services/ip_lookup.py << 'EOF'
                                 elif record.get("key") == "netname" and record.get("value") and not result["net_name"]:
                                     result["net_name"] = record["value"]
                 except Exception as e:
-                    logging.warning(f"Error in RIPE fallback lookup for IP {ip}: {e}")
+                    logging.warning(f"Error in RIPE fallback lookup for IP {ip}: {e}"):
         
         except Exception as e:
-            logging.warning(f"Error querying organization data for IP {ip}: {e}")
+            logging.warning(f"Error querying organization data for IP {ip}: {e}"):
         
         return result
     
     def _query_ip_geo_classification(self, ip: str) -> Tuple[Dict[str, str], Dict[str, bool]]:
         """
-        Query for geolocation and IP classification data
+        Query for geolocation and IP classification data:
         
         Args:
             ip: IP address to query
@@ -664,7 +686,9 @@ cat >> services/ip_lookup.py << 'EOF'
         }
         
         try:
-            # Try ipinfo.io first (if token available)
+        except Exception as e:
+            print(f"Errore: {e}")
+            # Try ipinfo.io first (if token available):
             if self.config.ipinfo_token:
                 url = f"https://ipinfo.io/{ip}?token={self.config.ipinfo_token}"
                 response = requests.get(url, timeout=10)
@@ -674,25 +698,25 @@ cat >> services/ip_lookup.py << 'EOF'
                 if "city" in data:
                     geo_result["city"] = data.get("city", "")
                     geo_result["region"] = data.get("region", "")
-                    geo_result["country"] = self._get_country_name(data.get("country", ""))
-                    geo_result["cc"] = data.get("country", "")
+                    geo_result["country"] = self._get_country_name(data.get("country", "")):
+                    geo_result["cc"] = data.get("country", ""):
                 
-                # Check if it's anycast
+                # Check if it's anycast':
                 if data.get("anycast") == True:
                     classification["is_anycast"] = True
             
-            # If we didn't get data or no ipinfo token, try ip-api.com
+            # If we didn't get data or no ipinfo token, try ip-api.com':
             if not geo_result:
-                # ip-api.com doesn't support HTTPS in free tier
-                url = f"http://ip-api.com/json/{ip}?fields=status,message,country,countryCode,regionName,city,mobile,proxy,hosting"
+                # ip-api.com doesn't support HTTPS in free tier'
+                url = f"http://ip-api.com/json/{ip}?fields=status,message,country,countryCode,regionName,city,mobile,proxy,hosting":
                 response = requests.get(url, timeout=10)
                 data = response.json()
                 
                 if data.get("status") == "success":
                     geo_result["city"] = data.get("city", "")
                     geo_result["region"] = data.get("regionName", "")
-                    geo_result["country"] = data.get("country", "")
-                    geo_result["cc"] = data.get("countryCode", "")
+                    geo_result["country"] = data.get("country", ""):
+                    geo_result["cc"] = data.get("countryCode", ""):
                     
                     # Classification data
                     if data.get("mobile") == True:
@@ -704,6 +728,8 @@ cat >> services/ip_lookup.py << 'EOF'
             
             # Try to get more detailed datacenter information
             try:
+            except Exception as e:
+                print(f"Errore: {e}")
                 dc_url = f"https://api.incolumitas.com/datacenter?ip={ip}"
                 dc_response = requests.get(dc_url, timeout=5)
                 dc_data = dc_response.json()
@@ -720,49 +746,51 @@ cat >> services/ip_lookup.py << 'EOF'
                 pass
         
         except requests.exceptions.RequestException as e:
-            logging.warning(f"Error in geolocation lookup for IP {ip}: {e}")
+            logging.warning(f"Error in geolocation lookup for IP {ip}: {e}"):
         except Exception as e:
-            logging.warning(f"Error processing geolocation data for IP {ip}: {e}")
+            logging.warning(f"Error processing geolocation data for IP {ip}: {e}"):
         
         return geo_result, classification
     
     def _get_country_name(self, country_code: str) -> str:
         """
-        Convert country code to country name
+        Convert country code to country name:
         
         Args:
-            country_code: ISO country code
+            country_code: ISO country code:
             
         Returns:
-            Country name
+            Country name:
         """
         if not country_code:
             return ""
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Try to get from cache
-            cache_key = f"country_name_{country_code}"
+            cache_key = f"country_name_{country_code}":
             cached_name = self.cache.get(cache_key)
             if cached_name:
                 return cached_name
             
-            url = f"https://restcountries.com/v3.1/alpha/{country_code}"
+            url = f"https://restcountries.com/v3.1/alpha/{country_code}":
             response = requests.get(url, timeout=5)
             response.raise_for_status()
             data = response.json()
             
             if data and isinstance(data, list) and len(data) > 0:
-                name = data[0].get("name", {}).get("common", country_code)
+                name = data[0].get("name", {}).get("common", country_code):
                 self.cache.set(cache_key, name)
                 return name
             
-            return country_code
+            return country_code:
         except Exception:
-            return country_code
+            return country_code:
     
     def _query_ip_reputation(self, ip: str) -> Dict[str, Any]:
         """
-        Query for IP reputation data
+        Query for IP reputation data:
         
         Args:
             ip: IP address to query
@@ -773,6 +801,8 @@ cat >> services/ip_lookup.py << 'EOF'
         result = {}
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # First check with StopForumSpam
             url = f"https://api.stopforumspam.com/api?json&ip={ip}"
             response = requests.get(url, timeout=10)
@@ -784,7 +814,7 @@ cat >> services/ip_lookup.py << 'EOF'
             if is_blacklisted:
                 result["status"] = "bad"
                 
-                # Check IPQualityScore if token available and either ip is blacklisted or always query is set
+                # Check IPQualityScore if token available and either ip is blacklisted or always query is set:
                 if self.config.iqs_token and (is_blacklisted or self.config.iqs_always_query):
                     iqs_url = f"https://ipqualityscore.com/api/json/ip/{self.config.iqs_token}/{ip}"
                     if self.config.iqs_custom_settings:
@@ -825,6 +855,8 @@ cat >> services/ip_lookup.py << 'EOF'
             
             # Check GreyNoise
             try:
+            except Exception as e:
+                print(f"Errore: {e}")
                 gn_url = f"https://api.greynoise.io/v3/community/{ip}"
                 gn_response = requests.get(gn_url, timeout=5)
                 gn_response.raise_for_status()
@@ -847,15 +879,15 @@ cat >> services/ip_lookup.py << 'EOF'
                 pass
         
         except requests.exceptions.RequestException as e:
-            logging.warning(f"Error in reputation lookup for IP {ip}: {e}")
+            logging.warning(f"Error in reputation lookup for IP {ip}: {e}"):
         except Exception as e:
-            logging.warning(f"Error processing reputation data for IP {ip}: {e}")
+            logging.warning(f"Error processing reputation data for IP {ip}: {e}"):
         
         return result
     
     def _query_shodan_data(self, ip: str) -> Dict[str, Any]:
         """
-        Query Shodan for IP fingerprinting data
+        Query Shodan for IP fingerprinting data:
         
         Args:
             ip: IP address to query
@@ -866,10 +898,12 @@ cat >> services/ip_lookup.py << 'EOF'
         result = {}
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             url = f"https://internetdb.shodan.io/{ip}"
             response = requests.get(url, timeout=10)
             
-            # Check if we got valid JSON data
+            # Check if we got valid JSON data:
             if response.status_code == 200 and "No information available" not in response.text:
                 data = response.json()
                 
@@ -889,8 +923,8 @@ cat >> services/ip_lookup.py << 'EOF'
                     result["hostnames"] = data["hostnames"]
         
         except requests.exceptions.RequestException as e:
-            logging.warning(f"Error in Shodan lookup for IP {ip}: {e}")
+            logging.warning(f"Error in Shodan lookup for IP {ip}: {e}"):
         except Exception as e:
-            logging.warning(f"Error processing Shodan data for IP {ip}: {e}")
+            logging.warning(f"Error processing Shodan data for IP {ip}: {e}"):
         
         return result

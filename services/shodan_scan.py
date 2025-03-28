@@ -81,11 +81,11 @@ class ShodanScanService(ShodanService):
                 elif self.network_utils.is_hostname(target):
                     resolved_ips = self.network_utils.resolve_hostname(target)
                     ips_to_scan.extend(resolved_ips)
-                # If it's an IP, add it directly
+                # If it's an IP, add it directly'
                 elif self.network_utils.is_valid_ip(target):
                     ips_to_scan.append(target)
             
-            # Filter out IPv6 addresses (Shodan InternetDB doesn't support them yet)
+            # Filter out IPv6 addresses (Shodan InternetDB doesn't support them yet)'
             ips_to_scan = [ip for ip in ips_to_scan if self.network_utils.is_ipv4(ip)]
             result.summary["scanned_ips"] = len(ips_to_scan)
             

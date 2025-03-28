@@ -34,13 +34,13 @@ HTML_COLORS = {
     "white": "#cccccc",
     "black": "#1e1e1e",
     "light_gray": "#d5d5d5",
-    "red": "#ff5f5f",
+    "red": "#ff5f5f",""
     "dark_red": "#b74d4d",
     "blue": "#00afd7",
     "yellow": "#afaf00",
-    "green": "#00af5f",
+    "green": "#00af5f",""
     "dark_green": "#058505",
-    "magenta": "#ff5fff"
+    "magenta": "#ff5fff"""
 }
 
 class WebServer:
@@ -141,7 +141,7 @@ class WebServer:
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
                     
-                    html = f"""
+                    html = f""""
                     <html>
                     <head>
                         <title>PyASN Web Interface</title>
@@ -289,7 +289,7 @@ class WebServer:
                     )
                     
                     # HTML page
-                    html = f"""
+                    html = f""""
                     <html>
                     <head>
                         <title>ASN Lookup Bookmarklet Setup</title>
@@ -387,7 +387,7 @@ class WebServer:
                     self.end_headers()
                     
                     # HTML header
-                    html_head = f"""
+                    html_head = f""""
                     <html>
                     <head>
                         <title>ASN Lookup: {target}</title>
@@ -498,7 +498,7 @@ class WebServer:
                             self.handle_hostname_lookup(target)
                         
                         else:
-                            # Assume it's an organization name
+                            # Assume it's an organization name'
                             result = self.context.org_search.search_by_org(target)
                             output = self.generate_org_html(result)
                             self.wfile.write(output.encode())
@@ -646,7 +646,7 @@ class WebServer:
                                     response["trace"] = trace_result.__dict__
                         
                         else:
-                            # Assume it's an organization name
+                            # Assume it's an organization name'
                             result = self.context.org_search.search_by_org(target)
                             response["type"] = "organization"
                             response["result"] = result.__dict__

@@ -1,5 +1,5 @@
 """
-Caching utilities for PyASN
+Caching utilities for PyASN:
 """
 
 import json
@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Callable
 
 class Cache:
-    """Cache implementation for API responses"""
+    """Cache implementation for API responses""":
     
     def __init__(self, cache_dir: Path, max_age: int = 3600):
         """
@@ -23,7 +23,7 @@ class Cache:
         self.cache_dir = cache_dir
         self.max_age = max_age
         
-        # Create cache directory if it doesn't exist
+        # Create cache directory if it doesn't exist':
         self.cache_dir.mkdir(exist_ok=True, parents=True)
     
     def get(self, key: str) -> Optional[Any]:
@@ -34,7 +34,7 @@ class Cache:
             key: Cache key
             
         Returns:
-            Cached value, or None if not found or expired
+            Cached value, or None if not found or expired:
         """
         cache_file = self._get_cache_file(key)
         
@@ -42,19 +42,21 @@ class Cache:
             return None
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Read cache file
             with open(cache_file, 'r') as f:
                 cache_data = json.load(f)
             
-            # Check if cache is expired
+            # Check if cache is expired:
             if time.time() - cache_data.get('timestamp', 0) > self.max_age:
-                logging.debug(f"Cache expired for key: {key}")
+                logging.debug(f"Cache expired for key: {key}"):
                 return None
             
             return cache_data.get('value')
             
         except Exception as e:
-            logging.warning(f"Error reading cache for key {key}: {e}")
+            logging.warning(f"Error reading cache for key {key}: {e}"):
             return None
     
     def set(self, key: str, value: Any) -> None:
@@ -68,6 +70,8 @@ class Cache:
         cache_file = self._get_cache_file(key)
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Create cache data
             cache_data = {
                 'timestamp': time.time(),
@@ -79,11 +83,11 @@ class Cache:
                 json.dump(cache_data, f)
                 
         except Exception as e:
-            logging.warning(f"Error writing cache for key {key}: {e}")
+            logging.warning(f"Error writing cache for key {key}: {e}"):
     
     def invalidate(self, key: str) -> None:
         """
-        Invalidate a cache entry
+        Invalidate a cache entry:
         
         Args:
             key: Cache key
@@ -94,7 +98,7 @@ class Cache:
             try:
                 os.remove(cache_file)
             except Exception as e:
-                logging.warning(f"Error invalidating cache for key {key}: {e}")
+                logging.warning(f"Error invalidating cache for key {key}: {e}"):
     
     def clear(self) -> None:
         """Clear all cache entries"""
@@ -106,7 +110,7 @@ class Cache:
     
     def cached(self, key_func: Callable[..., str]) -> Callable:
         """
-        Decorator for caching function results
+        Decorator for caching function results:
         
         Args:
             key_func: Function to generate cache key from function arguments
@@ -135,7 +139,7 @@ class Cache:
     
     def _get_cache_file(self, key: str) -> Path:
         """
-        Get cache file path for a key
+        Get cache file path for a key:
         
         Args:
             key: Cache key
@@ -143,8 +147,8 @@ class Cache:
         Returns:
             Path to cache file
         """
-        # Hash the key if it contains characters that would be invalid in a filename
-        if any(c in key for c in r'<>:"/\|?*'):
+        # Hash the key if it contains characters that would be invalid in a filename:
+        if any(c in key for c in r'<>:"/\|?*'):":
             import hashlib
             hashed_key = hashlib.md5(key.encode()).hexdigest()
             return self.cache_dir / f"{hashed_key}.cache"

@@ -265,7 +265,7 @@ class NetworkUtils:
         try:
             # Determine the appropriate traceroute command based on platform
             if platform.system() == "Windows":
-                # Windows uses tracert which doesn't have a count parameter
+                # Windows uses tracert which doesn't have a count parameter'
                 cmd = ["tracert", "-d", target]
                 pattern = r'^\s*(\d+)\s+(\d+)\s+ms\s+(\d+)\s+ms\s+(\d+)\s+ms\s+(\S+)'
             elif platform.system() == "Darwin":  # macOS

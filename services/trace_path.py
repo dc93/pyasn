@@ -120,7 +120,7 @@ class TracePathService(TraceService):
                         hop=hop_num,
                         ip=hop_ip,
                         ping=hop_ping,
-                        loss=0,  # We don't have loss percentage from traceroute output
+                        loss=0,  # We don't have loss percentage from traceroute output'
                         hostname=hop_info.reverse or "",
                         asn=hop_info.routing.get("as_number", ""),
                         as_name=hop_info.routing.get("as_name", ""),
@@ -133,11 +133,11 @@ class TracePathService(TraceService):
                     
                     result.hops.append(processed_hop)
                     
-                    # Add to AS path if it's a new AS
+                    # Add to AS path if it's a new AS'
                     if processed_hop.asn and processed_hop.asn not in seen_asns:
                         seen_asns.add(processed_hop.asn)
                         
-                        # Check if it's the destination
+                        # Check if it's the destination'
                         is_destination = hop_ip == target_ip
                         
                         result.as_path.append(ASHop(
@@ -147,7 +147,7 @@ class TracePathService(TraceService):
                         ))
                 
                 except LookupError as e:
-                    # If we can't look up this hop, still add it but with limited info
+                    # If we can't look up this hop, still add it but with limited info'
                     logging.warning(f"Could not get detailed information for hop {hop_num} ({hop_ip}): {e}")
                     result.hops.append(TraceHop(
                         hop=hop_num,

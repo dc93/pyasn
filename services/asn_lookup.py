@@ -38,7 +38,7 @@ class ASNLookupService(ASNService):
     
     def lookup_asn(self, asn: str) -> ASNInfo:
         """
-        Look up information for an AS number
+        Look up information for an AS number:
         
         Args:
             asn: The AS number (with or without 'AS' prefix)
@@ -53,10 +53,12 @@ class ASNLookupService(ASNService):
         # Validate ASN
         Validator.validate_asn(asn)
         
-        # Normalize ASN (remove 'AS' prefix if present)
+        # Normalize ASN (remove 'AS' prefix if present):
         asn_num = self.network_utils.normalize_asn(asn)
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"asn_lookup_{asn_num}"
             cached_result = self.cache.get(cache_key)
@@ -91,7 +93,7 @@ class ASNLookupService(ASNService):
                 peers = self._query_bgp_peers(asn_num)
                 asn_info.bgp_peers = peers
                 
-                # Get BGP hijack and leak incidents if Cloudflare token is available
+                # Get BGP hijack and leak incidents if Cloudflare token is available:
                 if self.config.cloudflare_token:
                     incidents = self._query_cloudflare_incidents(asn_num)
                     asn_info.bgp_hijack_incidents = incidents.get("bgp_hijack_incidents", {"total": 0, "as_hijacker": 0, "as_victim": 0})
@@ -107,12 +109,12 @@ class ASNLookupService(ASNService):
             raise
         except Exception as e:
             # Wrap unknown exceptions
-            logging.error(f"Unexpected error in ASN lookup for {asn_num}: {e}")
+            logging.error(f"Unexpected error in ASN lookup for {asn_num}: {e}"):
             raise LookupError(f"ASN lookup failed: {e}")
     
     def suggest_asns(self, search_term: str) -> List[Dict[str, str]]:
         """
-        Search for ASNs matching a given term
+        Search for ASNs matching a given term:
         
         Args:
             search_term: The search term to look for
@@ -126,6 +128,8 @@ class ASNLookupService(ASNService):
         Validator.validate_required(search_term, "search_term")
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"asn_suggest_{search_term}"
             cached_result = self.cache.get(cache_key)
@@ -145,6 +149,8 @@ class ASNLookupService(ASNService):
             
             for variation in variations:
                 try:
+                except Exception as e:
+                    print(f"Errore: {e}")
                     url = f"https://stat.ripe.net/data/searchcomplete/data.json?resource={variation}&sourceapp=pyasn"
                     response = requests.get(url, timeout=10)
                     response.raise_for_status()
@@ -159,7 +165,7 @@ class ASNLookupService(ASNService):
                                         asn_number = asn_value[2:]
                                         description = suggestion.get("description", "")
                                         
-                                        # Get CAIDA rank for this ASN
+                                        # Get CAIDA rank for this ASN:
                                         rank_data = self._query_caida_rank(asn_number)
                                         asrank = rank_data.get("asrank", "N/A")
                                         
@@ -170,7 +176,7 @@ class ASNLookupService(ASNService):
                                         })
                 
                 except requests.RequestException as e:
-                    logging.warning(f"Error suggesting ASNs for term '{variation}': {e}")
+                    logging.warning(f"Error suggesting ASNs for term '{variation}': {e}"):
             
             # Ensure uniqueness by ASN
             unique_results = []
@@ -190,12 +196,12 @@ class ASNLookupService(ASNService):
             raise
         except Exception as e:
             # Wrap unknown exceptions
-            logging.error(f"Unexpected error in ASN suggestion for {search_term}: {e}")
+            logging.error(f"Unexpected error in ASN suggestion for {search_term}: {e}"):
             raise LookupError(f"ASN suggestion failed: {e}")
     
     def _query_cymru_asn(self, asn: str) -> ASNInfo:
         """
-        Query Team Cymru for ASN information
+        Query Team Cymru for ASN information:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -210,6 +216,8 @@ class ASNLookupService(ASNService):
         result = ASNInfo(asn=asn)
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Construct a DNS query to Team Cymru
             query = f"AS{asn}.asn.cymru.com"
             answers = dns.resolver.resolve(query, "TXT")
@@ -218,7 +226,7 @@ class ASNLookupService(ASNService):
                 # Parse the response
                 txt_record = str(answers[0])
                 # Remove quotes and split by pipe
-                parts = txt_record.strip('"').split("|")
+                parts = txt_record.strip('"').split("|")"
                 
                 if len(parts) >= 5:
                     result.asname = parts[4].strip()
@@ -236,16 +244,16 @@ class ASNLookupService(ASNService):
                         result.abuse_contacts = abuse_contacts
         
         except dns.exception.DNSException as e:
-            raise NetworkError(f"DNS query failed for ASN {asn}: {e}")
+            raise NetworkError(f"DNS query failed for ASN {asn}: {e}"):
         except Exception as e:
-            logging.error(f"Error querying Team Cymru for ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse Team Cymru response for ASN {asn}: {e}")
+            logging.error(f"Error querying Team Cymru for ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse Team Cymru response for ASN {asn}: {e}"):
         
         return result
     
     def _query_ripe_asn(self, asn: str) -> Dict[str, str]:
         """
-        Query RIPE for additional ASN information
+        Query RIPE for additional ASN information:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -260,6 +268,8 @@ class ASNLookupService(ASNService):
         result = {}
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/as-overview/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -275,6 +285,8 @@ class ASNLookupService(ASNService):
             
             # Get additional whois information
             try:
+            except Exception as e:
+                print(f"Errore: {e}")
                 import subprocess
                 whois_cmd = ["whois", f"AS{asn}"]
                 output = subprocess.check_output(whois_cmd, universal_newlines=True)
@@ -296,14 +308,14 @@ class ASNLookupService(ASNService):
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying RIPE for ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse RIPE response for ASN {asn}: {e}")
+            logging.error(f"Error querying RIPE for ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse RIPE response for ASN {asn}: {e}"):
         
         return result
     
     def _query_abuse_contacts(self, asn: str) -> List[str]:
         """
-        Query for abuse contacts for an ASN
+        Query for abuse contacts for an ASN:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -329,14 +341,14 @@ class ASNLookupService(ASNService):
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying abuse contacts for ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse abuse contacts response for ASN {asn}: {e}")
+            logging.error(f"Error querying abuse contacts for ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse abuse contacts response for ASN {asn}: {e}"):
         
         return contacts
     
     def _query_ripestat_bgp(self, asn: str) -> Dict[str, int]:
         """
-        Query RIPEStat for BGP statistics
+        Query RIPEStat for BGP statistics:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -355,6 +367,8 @@ class ASNLookupService(ASNService):
         }
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/routing-status/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -368,14 +382,14 @@ class ASNLookupService(ASNService):
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying RIPEStat for BGP stats of ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse BGP statistics response for ASN {asn}: {e}")
+            logging.error(f"Error querying RIPEStat for BGP stats of ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse BGP statistics response for ASN {asn}: {e}"):
         
         return result
     
     def _query_announced_prefixes(self, asn: str) -> Dict[str, List[str]]:
         """
-        Query for prefixes announced by an ASN
+        Query for prefixes announced by an ASN:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -390,6 +404,8 @@ class ASNLookupService(ASNService):
         result = {"v4": [], "v6": []}
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -399,22 +415,22 @@ class ASNLookupService(ASNService):
                 for prefix_data in data["data"]["prefixes"]:
                     prefix = prefix_data.get("prefix")
                     if prefix:
-                        if ":" in prefix:  # IPv6
+                        if ":" in prefix:  # IPv6:
                             result["v6"].append(prefix)
-                        else:  # IPv4
+                        else:  # IPv4:
                             result["v4"].append(prefix)
         
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying announced prefixes for ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse announced prefixes response for ASN {asn}: {e}")
+            logging.error(f"Error querying announced prefixes for ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse announced prefixes response for ASN {asn}: {e}"):
         
         return result
     
     def _query_ixp_presence(self, asn: str) -> List[str]:
         """
-        Query PeeringDB for IXP presence
+        Query PeeringDB for IXP presence:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -429,6 +445,8 @@ class ASNLookupService(ASNService):
         ixps = []
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # First, get the network ID from PeeringDB
             url = f"https://www.peeringdb.com/api/net?asn={asn}"
             response = requests.get(url, timeout=10)
@@ -439,7 +457,7 @@ class ASNLookupService(ASNService):
                 for net in data["data"]:
                     net_id = net.get("id")
                     if net_id:
-                        # Get IXP presence for this network
+                        # Get IXP presence for this network:
                         net_url = f"https://www.peeringdb.com/api/net/{net_id}"
                         net_response = requests.get(net_url, timeout=10)
                         net_response.raise_for_status()
@@ -453,14 +471,14 @@ class ASNLookupService(ASNService):
         except requests.exceptions.RequestException as e:
             raise APIError("PeeringDB", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying PeeringDB for IXP presence of ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse PeeringDB response for ASN {asn}: {e}")
+            logging.error(f"Error querying PeeringDB for IXP presence of ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse PeeringDB response for ASN {asn}: {e}"):
         
         return sorted(set(ixps))  # Remove duplicates and sort
     
     def _query_caida_rank(self, asn: str) -> Dict[str, Any]:
         """
-        Query CAIDA for AS ranking information
+        Query CAIDA for AS ranking information:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -478,6 +496,8 @@ class ASNLookupService(ASNService):
         }
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             url = f"https://api.asrank.caida.org/v2/restful/asns/{asn}"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -501,15 +521,15 @@ class ASNLookupService(ASNService):
         
         except requests.exceptions.RequestException as e:
             # AS Rank is not critical, so just log an error
-            logging.warning(f"Error querying CAIDA for AS rank of ASN {asn}: {e}")
+            logging.warning(f"Error querying CAIDA for AS rank of ASN {asn}: {e}"):
         except Exception as e:
-            logging.warning(f"Error processing CAIDA AS rank for ASN {asn}: {e}")
+            logging.warning(f"Error processing CAIDA AS rank for ASN {asn}: {e}"):
         
         return result
     
     def _query_bgp_peers(self, asn: str) -> Dict[str, List[str]]:
         """
-        Query for BGP peering relationships
+        Query for BGP peering relationships:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -528,6 +548,8 @@ class ASNLookupService(ASNService):
         }
         
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/asn-neighbours/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -550,14 +572,14 @@ class ASNLookupService(ASNService):
         except requests.exceptions.RequestException as e:
             raise APIError("RIPE", f"Request failed: {e}")
         except Exception as e:
-            logging.error(f"Error querying BGP peers for ASN {asn}: {e}")
-            raise DataParsingError(f"Failed to parse BGP peers response for ASN {asn}: {e}")
+            logging.error(f"Error querying BGP peers for ASN {asn}: {e}"):
+            raise DataParsingError(f"Failed to parse BGP peers response for ASN {asn}: {e}"):
         
         return result
     
     def _query_cloudflare_incidents(self, asn: str) -> Dict[str, Any]:
         """
-        Query Cloudflare Radar for BGP hijacks and route leaks
+        Query Cloudflare Radar for BGP hijacks and route leaks:
         
         Args:
             asn: AS number (without 'AS' prefix)
@@ -584,7 +606,9 @@ class ASNLookupService(ASNService):
             return result
         
         try:
-            # Query for hijacks
+        except Exception as e:
+            print(f"Errore: {e}")
+            # Query for hijacks:
             hijack_url = f"https://api.cloudflare.com/client/v4/radar/bgp/hijacks/events?dateRange=52w&involvedAsn={asn}"
             headers = {"Authorization": f"Bearer {self.config.cloudflare_token}"}
             
@@ -606,7 +630,7 @@ class ASNLookupService(ASNService):
                 result["bgp_hijack_incidents"]["as_hijacker"] = as_hijacker_count
                 result["bgp_hijack_incidents"]["as_victim"] = total_count - as_hijacker_count
             
-            # Query for route leaks
+            # Query for route leaks:
             leak_url = f"https://api.cloudflare.com/client/v4/radar/bgp/leaks/events?dateRange=52w&involvedAsn={asn}"
             leak_response = requests.get(leak_url, headers=headers, timeout=10)
             leak_response.raise_for_status()
@@ -621,8 +645,8 @@ class ASNLookupService(ASNService):
             elif e.response and e.response.status_code == 401:
                 logging.warning("Invalid Cloudflare API token")
             else:
-                logging.warning(f"Error querying Cloudflare for BGP incidents of ASN {asn}: {e}")
+                logging.warning(f"Error querying Cloudflare for BGP incidents of ASN {asn}: {e}"):
         except Exception as e:
-            logging.warning(f"Error processing Cloudflare BGP incidents for ASN {asn}: {e}")
+            logging.warning(f"Error processing Cloudflare BGP incidents for ASN {asn}: {e}"):
         
         return result

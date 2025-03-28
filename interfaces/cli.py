@@ -1,5 +1,5 @@
 """
-Command-line interface for PyASN
+Command-line interface for PyASN:
 """
 
 import argparse
@@ -19,7 +19,7 @@ from pyasn.services.shodan_scan import ShodanScanService
 from pyasn.utils.cache import Cache
 from pyasn.utils.network import NetworkUtils
 
-# Initialize colorama for cross-platform color support
+# Initialize colorama for cross-platform color support:
 colorama_init(autoreset=True)
 
 # Console color definitions
@@ -43,7 +43,7 @@ class Colors:
     RESET = Style.RESET_ALL
 
 class CLI:
-    """Command-line interface for PyASN"""
+    """Command-line interface for PyASN""":
     
     def __init__(self, config: Config):
         """
@@ -71,10 +71,12 @@ class CLI:
             args: Command-line arguments
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         # Parse arguments
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             parser = self._create_parser()
             parsed_args = parser.parse_args(args)
             
@@ -130,17 +132,17 @@ class CLI:
         
         # Main options
         parser.add_argument("-t", "--trace", action="store_true", help="Enable AS path trace to the TARGET (this is the default behavior)")
-        parser.add_argument("-n", "--no-trace", action="store_true", help="Disable tracing the AS path to the TARGET (for IP targets) or disable additional INETNUM lookups (for AS targets)")
+        parser.add_argument("-n", "--no-trace", action="store_true", help="Disable tracing the AS path to the TARGET (for IP targets) or disable additional INETNUM lookups (for AS targets)"):
         parser.add_argument("-d", "--detailed", action="store_true", help="Output detailed hop info during the AS path trace to the TARGET")
         parser.add_argument("-a", "--asn-suggest", action="store_true", help="Lookup AS names and numbers matching TARGET")
-        parser.add_argument("-u", "--upstream", action="store_true", help="Inspect BGP updates and ASPATHs for the TARGET address/prefix and identify possible transit/upstream autonomous systems")
-        parser.add_argument("-c", "--country-cidr", action="store_true", help="Lookup all IPv4/v6 CIDR blocks allocated to the TARGET country")
+        parser.add_argument("-u", "--upstream", action="store_true", help="Inspect BGP updates and ASPATHs for the TARGET address/prefix and identify possible transit/upstream autonomous systems"):
+                print(f"IPv4 blocks ({len(result.ipv4_blocks)}):")
         parser.add_argument("-g", "--geolocate", action="store_true", help="Geolocate all IPv4/v6 addresses passed as TARGET")
-        parser.add_argument("-s", "--shodan", action="store_true", help="Query Shodan's InternetDB for CVE/CPE/Tags/Ports/Hostnames data about TARGET")
+        parser.add_argument("-s", "--shodan", action="store_true", help="Query Shodan's InternetDB for CVE/CPE/Tags/Ports/Hostnames data about TARGET")':
         parser.add_argument("-o", "--organization", action="store_true", help="Force TARGET to be treated as an Organization Name")
         parser.add_argument("-m", "--monochrome", action="store_true", help="Disable colored output")
         parser.add_argument("-v", "--verbose", action="store_true", help="Enable (and log to a file) debug messages")
-        parser.add_argument("-j", "--json", action="store_true", help="Set output to compact JSON mode (ideal for machine parsing)")
+        parser.add_argument("-j", "--json", action="store_true", help="Set output to compact JSON mode (ideal for machine parsing)"):
         parser.add_argument("-J", "--json-pretty", action="store_true", help="Set output to pretty-printed JSON mode")
         
         # Special commands
@@ -148,8 +150,8 @@ class CLI:
         parser.add_argument("--configure", action="store_true", help="Configure API tokens and settings")
         parser.add_argument("--clear-cache", action="store_true", help="Clear the cache")
         
-        # Target for lookup
-        parser.add_argument("target", nargs="*", help="Target for lookup (ASN, IP, hostname, URL, organization name)")
+        # Target for lookup:
+        parser.add_argument("target", nargs="*", help="Target for lookup (ASN, IP, hostname, URL, organization name)"):
         
         return parser
     
@@ -175,7 +177,7 @@ class CLI:
             args: Parsed command-line arguments
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         # Join target arguments into a single string
         target = ' '.join(args.target)
@@ -186,7 +188,7 @@ class CLI:
         elif args.upstream:
             return self._run_upstream(target)
         elif args.country_cidr:
-            return self._run_country_cidr(target)
+            return self._run_country_cidr(target):
         elif args.geolocate:
             return self._run_geolocate(target)
         elif args.shodan:
@@ -201,11 +203,11 @@ class CLI:
         Run configuration wizard
         
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         print("PyASN Configuration Wizard")
         print("--------------------------")
-        print("Configure API tokens for enhanced functionality.\n")
+        print("Configure API tokens for enhanced functionality.\n"):
         
         # IPInfo token
         current_ipinfo = self.config.ipinfo_token or "Not set"
@@ -244,7 +246,7 @@ class CLI:
         Clear the cache
         
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
             self.cache.clear()
@@ -259,10 +261,10 @@ class CLI:
         Run in lookup mode
         
         Args:
-            target: Target for lookup
+            target: Target for lookup:
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         # Determine the type of target
         if self.network_utils.is_asn(target):
@@ -275,7 +277,7 @@ class CLI:
         elif self.network_utils.is_hostname(target):
             return self._lookup_hostname_target(target)
         else:
-            # If no specific type matches, assume it's an organization name
+            # If no specific type matches, assume it's an organization name'
             return self._run_organization(target)
     
     def _lookup_asn_target(self, target: str) -> int:
@@ -286,9 +288,11 @@ class CLI:
             target: ASN to look up
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Get ASN information
             asn_info = self.asn_lookup.lookup_asn(target)
             
@@ -311,9 +315,11 @@ class CLI:
             target: IP to look up
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Get IP information
             ip_info = self.ip_lookup.lookup_ip(target)
             
@@ -321,7 +327,7 @@ class CLI:
             if self.config.json_output:
                 result = ip_info.__dict__
                 
-                # Add trace if enabled
+                # Add trace if enabled:
                 if self.config.mtr_tracing:
                     trace_result = self.trace_path.trace_as_path(target)
                     result["trace"] = trace_result.__dict__
@@ -330,7 +336,7 @@ class CLI:
             else:
                 self._output_ip_info(ip_info)
                 
-                # Perform trace if enabled
+                # Perform trace if enabled:
                 if self.config.mtr_tracing:
                     trace_result = self.trace_path.trace_as_path(target)
                     self._output_trace_result(trace_result)
@@ -348,9 +354,11 @@ class CLI:
             target: Hostname to look up
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             # Resolve hostname to IPs
             print(f"Resolving \"{target}\"...")
             ips = self.network_utils.resolve_hostname(target)
@@ -369,7 +377,7 @@ class CLI:
                     print("\n" + "=" * 60)
                     self._output_ip_info(ip_info)
             
-            # Output JSON if enabled
+            # Output JSON if enabled:
             if self.config.json_output:
                 result = {
                     "hostname": target,
@@ -377,7 +385,7 @@ class CLI:
                     "results": results
                 }
                 
-                # Add trace if enabled
+                # Add trace if enabled:
                 if self.config.mtr_tracing and ips:
                     trace_result = self.trace_path.trace_as_path(ips[0])
                     result["trace"] = trace_result.__dict__
@@ -404,9 +412,11 @@ class CLI:
             target: Search term
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+        except Exception as e:
+            print(f"Errore: {e}")
             suggestions = self.asn_lookup.suggest_asns(target)
             
             if self.config.json_output:
@@ -430,7 +440,7 @@ class CLI:
                 for desc, asns in by_description.items():
                     print(f"{Colors.GREEN}{desc}{Colors.RESET}")
                     for asn in asns:
-                        rank_text = f"Rank: {asn['rank']}" if asn["rank"] != "N/A" else "Rank: unknown"
+                        rank_text = f"Rank: {asn['rank']}" if asn["rank"] != "N/A" else "Rank: unknown":
                         print(f"  {Colors.YELLOW}AS{asn['asn']}{Colors.RESET} ({rank_text})")
                     print()
             
@@ -447,7 +457,7 @@ class CLI:
             target: IP address
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         # Ensure target is an IP address
         if not self.network_utils.is_valid_ip(target):
@@ -456,34 +466,36 @@ class CLI:
         
         # This would require implementation of BGP update inspection
         # For now, showing a placeholder
-        print(f"Upstream/transit lookup for {target} is not fully implemented yet.")
+        print(f"Upstream/transit lookup for {target} is not fully implemented yet."):
         print("This would analyze BGP updates to identify likely transit providers.")
         
         return 0
     
     def _run_country_cidr(self, target: str) -> int:
         """
-        Run in country CIDR lookup mode
+        Run in country CIDR lookup mode:
         
         Args:
-            target: Country name or code
+            target: Country name or code:
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
-            result = self.ip_lookup.country_cidr_lookup(target)
+        except Exception as e:
+            print(f"Errore: {e}")
+            result = self.ip_lookup.country_cidr_lookup(target):
             
             if self.config.json_output:
                 self._output_json(result.__dict__)
             else:
                 if not result.country_name:
-                    print(f"Error: Could not find country matching '{target}'")
+                    print(f"Error: Could not find country matching '{target}'"):
                     return 1
                 
-                print(f"\nCIDR blocks allocated to {result.country_name} ({result.country_code.upper()}):\n")
+                print(f"\nCIDR blocks allocated to {result.country_name} ({result.country_code.upper()}):\n"):
                 
-                print(f"IPv4
+                print(f"IPv4 blocks ({len(result.ipv4_blocks)}):")")"
 
 # From file: parte_2.txt
 # Continue interfaces/cli.py
@@ -520,9 +532,11 @@ cat >> interfaces/cli.py << 'EOF'
             target: Text containing IP addresses or path to file
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+                except Exception as e:
+                    print(f"Errore: {e}")
             # If the target is a file or stdin, extract IPs
             import os
             if os.path.isfile(target):
@@ -541,22 +555,22 @@ cat >> interfaces/cli.py << 'EOF'
             if self.config.json_output:
                 self._output_json(result.__dict__)
             else:
-                print(f"\nBulk geolocation results for {len(ips)} IP addresses ({len(set(ips))} unique):\n")
+                print(f"\nBulk geolocation results for {len(ips)} IP addresses ({len(set(ips))} unique):\n"):
                 
                 # Print top IPs by occurrence
                 print(f"Top IPs by occurrence:")
                 for ip, count in sorted(result.ip_counts.items(), key=lambda x: x[1], reverse=True)[:10]:
                     print(f"  {ip}: {count} occurrences")
                 
-                # Print country statistics
-                print(f"\nCountry statistics:")
+                # Print country statistics:
+                print(f"\nCountry statistics:"):
                 for country, count in result.country_stats.items():
-                    print(f"  {country}: {count} IPs")
+                    print(f"  {country}: {count} IPs"):
                 
                 # Print detailed geolocation data
                 print(f"\nDetailed geolocation data:")
                 for ip_data in result.geolocation_data:
-                    location = f"{ip_data.get('city', '')}, {ip_data.get('region', '')}, {ip_data.get('country', '')}"
+                    location = f"{ip_data.get('city', '')}, {ip_data.get('region', '')}, {ip_data.get('country', '')}":
                     location = location.replace(", , ", ", ").strip(", ")
                     
                     ip_type = []
@@ -569,7 +583,7 @@ cat >> interfaces/cli.py << 'EOF'
                     if ip_data.get("is_dc"):
                         ip_type.append("Datacenter")
                     
-                    type_str = f" ({', '.join(ip_type)})" if ip_type else ""
+                    type_str = f" ({', '.join(ip_type)})" if ip_type else "":
                     
                     print(f"  {ip_data['ip']} - {location}{type_str} - {ip_data['hits']} occurrences")
             
@@ -586,9 +600,11 @@ cat >> interfaces/cli.py << 'EOF'
             target: Targets to scan
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+                except Exception as e:
+                    print(f"Errore: {e}")
             # Split target into individual targets
             targets = target.split()
             
@@ -597,14 +613,14 @@ cat >> interfaces/cli.py << 'EOF'
             if self.config.json_output:
                 self._output_json(result.__dict__)
             else:
-                print(f"\nShodan scan results for {len(targets)} target(s):\n")
+                print(f"\nShodan scan results for {len(targets)} target(s):\n"):
                 
                 if result.summary.get("scanned_ips", 0) == 0:
                     print("Error: No valid IPs to scan")
                     return 1
                 
                 # Print summary
-                print(f"Scanned {result.summary['scanned_ips']} IPs, found data for {result.summary['hosts_with_data']} hosts\n")
+                print(f"Scanned {result.summary['scanned_ips']} IPs, found data for {result.summary['hosts_with_data']} hosts\n"):
                 
                 # Print top ports
                 print(f"Top open ports:")
@@ -671,21 +687,23 @@ cat >> interfaces/cli.py << 'EOF'
             target: Organization name
             
         Returns:
-            Exit code (0 for success, non-zero for error)
+            Exit code (0 for success, non-zero for error):
         """
         try:
+                except Exception as e:
+                    print(f"Errore: {e}")
             result = self.org_search.search_by_org(target)
             
             if self.config.json_output:
                 self._output_json(result.__dict__)
             else:
-                print(f"\nOrganization search results for \"{target}\":\n")
+                print(f"\nOrganization search results for \"{target}\":\n"):
                 
                 if not result.matches:
                     print("No matching organizations found.")
                     return 1
                 
-                # Ask user to select an organization if multiple matches
+                # Ask user to select an organization if multiple matches:
                 org_name = result.matches[0]
                 if len(result.matches) > 1:
                     print("Multiple organizations found. Please select one:")
@@ -700,20 +718,20 @@ cat >> interfaces/cli.py << 'EOF'
                                 break
                         except ValueError:
                             pass
-                        print("Invalid choice. Please try again.")
+                        print("Invalid choice. Please try again."):
                 
                 # Re-query with the selected organization
                 if org_name != result.matches[0]:
                     result = self.org_search.search_by_org(org_name)
                 
                 # Print results
-                print(f"\nNetwork ranges for {org_name}:")
+                print(f"\nNetwork ranges for {org_name}:"):
                 
                 print("\nIPv4 networks:")
                 if result.ipv4_networks:
                     for network in result.ipv4_networks:
                         reg_date = network.get("registration_date", "")
-                        net_type = f" ({network['net_type']})" if network.get("net_type") else ""
+                        net_type = f" ({network['net_type']})" if network.get("net_type") else "":
                         
                         print(f"  {network['prefix']} - {network['net_name']}{net_type}")
                         if reg_date:
@@ -725,7 +743,7 @@ cat >> interfaces/cli.py << 'EOF'
                 if result.ipv6_networks:
                     for network in result.ipv6_networks:
                         reg_date = network.get("registration_date", "")
-                        net_type = f" ({network['net_type']})" if network.get("net_type") else ""
+                        net_type = f" ({network['net_type']})" if network.get("net_type") else "":
                         
                         print(f"  {network['prefix']} - {network['net_name']}{net_type}")
                         if reg_date:
@@ -758,7 +776,7 @@ cat >> interfaces/cli.py << 'EOF'
         Args:
             asn_info: ASNInfo object to output
         """
-        print(f"\nASN Information for AS{asn_info.asn}:\n")
+        print(f"\nASN Information for AS{asn_info.asn}:\n"):
         
         # Basic information
         print(f"ASN: {Colors.RED}AS{asn_info.asn}{Colors.RESET}")
@@ -854,7 +872,7 @@ cat >> interfaces/cli.py << 'EOF'
         Args:
             ip_info: IPInfo object to output
         """
-        print(f"\nIP Information for {ip_info.ip} (IPv{ip_info.ip_version}):\n")
+        print(f"\nIP Information for {ip_info.ip} (IPv{ip_info.ip_version}):\n"):
         
         # PTR record
         ptr = ip_info.reverse or "None"
@@ -926,7 +944,7 @@ cat >> interfaces/cli.py << 'EOF'
         if geo:
             city = geo.get("city", "")
             region = geo.get("region", "")
-            country = geo.get("country", "")
+            country = geo.get("country", ""):
             cc = geo.get("cc", "")
             
             location = []
@@ -935,7 +953,9 @@ cat >> interfaces/cli.py << 'EOF'
             if region:
                 location.append(region)
             if country:
-                location.append(country)
+                except Exception as e:
+                    print(f"Errore: {e}")
+                location.append(country):
             
             if location:
                 print(f"Geolocation: {Colors.MAGENTA}{', '.join(location)} ({cc}){Colors.RESET}")
@@ -956,7 +976,7 @@ cat >> interfaces/cli.py << 'EOF'
                 status_text = status.upper()
             
             threat_score = rep.get("threat_score", "")
-            score_text = f" (Threat Score: {threat_score}%)" if threat_score else ""
+            score_text = f" (Threat Score: {threat_score}%)" if threat_score else "":
             
             print(f"Reputation: {status_color}{status_text}{score_text}{Colors.RESET}")
             
@@ -1021,7 +1041,7 @@ cat >> interfaces/cli.py << 'EOF'
             vulns = fingerprinting.get("vulns", [])
             if vulns:
                 print(f"Vulnerabilities: {Colors.RED}{', '.join(vulns)}{Colors.RESET}")
-                print(f"  Check https://nvd.nist.gov/vuln/search for details")
+                print(f"  Check https://nvd.nist.gov/vuln/search for details"):
     
     def _output_trace_result(self, trace_result):
         """
@@ -1039,7 +1059,7 @@ cat >> interfaces/cli.py << 'EOF'
         for hop in trace_result.hops:
             hop_num = hop.hop
             hop_ip = hop.ip or "*"
-            hop_ping = f"{hop.ping:.1f} ms" if hop.ping else "*"
+            hop_ping = f"{hop.ping:.1f} ms" if hop.ping else "*":
             
             # AS information
             asn = hop.asn
