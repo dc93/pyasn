@@ -34,13 +34,13 @@ HTML_COLORS = {
     "white": "#cccccc",
     "black": "#1e1e1e",
     "light_gray": "#d5d5d5",
-    "red": "#ff5f5f",""
+    "red": "#ff5f5f",
     "dark_red": "#b74d4d",
     "blue": "#00afd7",
     "yellow": "#afaf00",
-    "green": "#00af5f",""
+    "green": "#00af5f",
     "dark_green": "#058505",
-    "magenta": "#ff5fff"""
+    "magenta": "#ff5fff"
 }
 
 class WebServer:
@@ -141,7 +141,7 @@ class WebServer:
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
                     
-                    html = f""""
+                    html = f"""
                     <html>
                     <head>
                         <title>PyASN Web Interface</title>
@@ -289,7 +289,7 @@ class WebServer:
                     )
                     
                     # HTML page
-                    html = f""""
+                    html = f"""
                     <html>
                     <head>
                         <title>ASN Lookup Bookmarklet Setup</title>

@@ -57,8 +57,6 @@ class ASNLookupService(ASNService):
         asn_num = self.network_utils.normalize_asn(asn)
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"asn_lookup_{asn_num}"
             cached_result = self.cache.get(cache_key)
@@ -109,7 +107,7 @@ class ASNLookupService(ASNService):
             raise
         except Exception as e:
             # Wrap unknown exceptions
-            logging.error(f"Unexpected error in ASN lookup for {asn_num}: {e}"):
+            logging.error(f"Unexpected error in ASN lookup for {asn_num}: {e}")
             raise LookupError(f"ASN lookup failed: {e}")
     
     def suggest_asns(self, search_term: str) -> List[Dict[str, str]]:
@@ -128,8 +126,6 @@ class ASNLookupService(ASNService):
         Validator.validate_required(search_term, "search_term")
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"asn_suggest_{search_term}"
             cached_result = self.cache.get(cache_key)
@@ -216,8 +212,6 @@ class ASNLookupService(ASNService):
         result = ASNInfo(asn=asn)
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Construct a DNS query to Team Cymru
             query = f"AS{asn}.asn.cymru.com"
             answers = dns.resolver.resolve(query, "TXT")
@@ -244,9 +238,9 @@ class ASNLookupService(ASNService):
                         result.abuse_contacts = abuse_contacts
         
         except dns.exception.DNSException as e:
-            raise NetworkError(f"DNS query failed for ASN {asn}: {e}"):
+            raise NetworkError(f"DNS query failed for ASN {asn}: {e}")
         except Exception as e:
-            logging.error(f"Error querying Team Cymru for ASN {asn}: {e}"):
+            logging.error(f"Error querying Team Cymru for ASN {asn}: {e}")
             raise DataParsingError(f"Failed to parse Team Cymru response for ASN {asn}: {e}"):
         
         return result
@@ -268,8 +262,6 @@ class ASNLookupService(ASNService):
         result = {}
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/as-overview/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -367,8 +359,6 @@ class ASNLookupService(ASNService):
         }
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/routing-status/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -404,8 +394,6 @@ class ASNLookupService(ASNService):
         result = {"v4": [], "v6": []}
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -445,8 +433,6 @@ class ASNLookupService(ASNService):
         ixps = []
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # First, get the network ID from PeeringDB
             url = f"https://www.peeringdb.com/api/net?asn={asn}"
             response = requests.get(url, timeout=10)
@@ -496,8 +482,6 @@ class ASNLookupService(ASNService):
         }
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             url = f"https://api.asrank.caida.org/v2/restful/asns/{asn}"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -548,8 +532,6 @@ class ASNLookupService(ASNService):
         }
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             url = f"https://stat.ripe.net/data/asn-neighbours/data.json?resource=AS{asn}&sourceapp=pyasn"
             response = requests.get(url, timeout=10)
             response.raise_for_status()
@@ -606,8 +588,6 @@ class ASNLookupService(ASNService):
             return result
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Query for hijacks:
             hijack_url = f"https://api.cloudflare.com/client/v4/radar/bgp/hijacks/events?dateRange=52w&involvedAsn={asn}"
             headers = {"Authorization": f"Bearer {self.config.cloudflare_token}"}

@@ -18,7 +18,7 @@ from pyasn.core.exceptions import (
     ValidationError, NetworkError, APIError, DataParsingError,
     LookupError, RateLimitError
 )
-from pyasn.core.models import IPInfo, GeolocateResult, CountryCIDRResult:
+from pyasn.core.models import IPInfo, GeolocateResult, CountryCIDRResult
 from pyasn.services import IPService
 from pyasn.utils.cache import Cache
 from pyasn.utils.network import NetworkUtils
@@ -59,8 +59,6 @@ class IPLookupService(IPService):
         Validator.validate_ip(ip)
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"ip_lookup_{ip}"
             cached_result = self.cache.get(cache_key)
@@ -70,7 +68,7 @@ class IPLookupService(IPService):
             # Create initial result
             result = IPInfo(
                 ip=ip,
-                ip_version="4" if self.network_utils.is_ipv4(ip) else "6",:
+                ip_version="4" if self.network_utils.is_ipv4(ip) else "6",
                 routing={},
                 type={},
                 geolocation={},
@@ -158,8 +156,6 @@ class IPLookupService(IPService):
         Validator.validate_required(ips, "ips")
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Count occurrences of each IP
             ip_counter = Counter(ips)
             unique_ips = list(set(ips))
@@ -175,7 +171,7 @@ class IPLookupService(IPService):
             # Process each unique IP
             # Geolocation processing in batches
             batch_size = 100
-            ip_batches = [unique_ips[i:i + batch_size] for i in range(0, len(unique_ips), batch_size)]:
+            ip_batches = [unique_ips[i:i + batch_size] for i in range(0, len(unique_ips), batch_size)]
             
             for batch in ip_batches:
                 for ip in batch:
@@ -241,8 +237,6 @@ class IPLookupService(IPService):
         Validator.validate_required(country, "country"):
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"country_cidr_{country}":
             cached_result = self.cache.get(cache_key)
@@ -341,8 +335,6 @@ cat >> services/ip_lookup.py << 'EOF'
             ValidationError: If IP is invalid
         """
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             ip_obj = ipaddress.ip_address(ip)
             
             if ip_obj.version == 4:
@@ -426,8 +418,6 @@ cat >> services/ip_lookup.py << 'EOF'
         }
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try RIPE first for IPv4 (more detailed):
             if self.network_utils.is_ipv4(ip):
                 ripe_url = f"https://stat.ripe.net/data/prefix-overview/data.json?resource={ip}&sourceapp=pyasn"
@@ -570,8 +560,6 @@ cat >> services/ip_lookup.py << 'EOF'
         }
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try whois lookup
             try:
             except Exception as e:
@@ -686,8 +674,6 @@ cat >> services/ip_lookup.py << 'EOF'
         }
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try ipinfo.io first (if token available):
             if self.config.ipinfo_token:
                 url = f"https://ipinfo.io/{ip}?token={self.config.ipinfo_token}"
@@ -766,8 +752,6 @@ cat >> services/ip_lookup.py << 'EOF'
             return ""
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Try to get from cache
             cache_key = f"country_name_{country_code}":
             cached_name = self.cache.get(cache_key)
@@ -801,8 +785,6 @@ cat >> services/ip_lookup.py << 'EOF'
         result = {}
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # First check with StopForumSpam
             url = f"https://api.stopforumspam.com/api?json&ip={ip}"
             response = requests.get(url, timeout=10)
@@ -898,8 +880,6 @@ cat >> services/ip_lookup.py << 'EOF'
         result = {}
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             url = f"https://internetdb.shodan.io/{ip}"
             response = requests.get(url, timeout=10)
             

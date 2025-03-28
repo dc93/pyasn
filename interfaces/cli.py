@@ -75,8 +75,6 @@ class CLI:
         """
         # Parse arguments
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             parser = self._create_parser()
             parsed_args = parser.parse_args(args)
             
@@ -132,17 +130,17 @@ class CLI:
         
         # Main options
         parser.add_argument("-t", "--trace", action="store_true", help="Enable AS path trace to the TARGET (this is the default behavior)")
-        parser.add_argument("-n", "--no-trace", action="store_true", help="Disable tracing the AS path to the TARGET (for IP targets) or disable additional INETNUM lookups (for AS targets)"):
+        parser.add_argument("-n", "--no-trace", action="store_true", help="Disable tracing the AS path to the TARGET (for IP targets) or disable additional INETNUM lookups (for AS targets)")
         parser.add_argument("-d", "--detailed", action="store_true", help="Output detailed hop info during the AS path trace to the TARGET")
         parser.add_argument("-a", "--asn-suggest", action="store_true", help="Lookup AS names and numbers matching TARGET")
         parser.add_argument("-u", "--upstream", action="store_true", help="Inspect BGP updates and ASPATHs for the TARGET address/prefix and identify possible transit/upstream autonomous systems"):
                 print(f"IPv4 blocks ({len(result.ipv4_blocks)}):")
         parser.add_argument("-g", "--geolocate", action="store_true", help="Geolocate all IPv4/v6 addresses passed as TARGET")
-        parser.add_argument("-s", "--shodan", action="store_true", help="Query Shodan's InternetDB for CVE/CPE/Tags/Ports/Hostnames data about TARGET")':
+        parser.add_argument("-s", "--shodan", action="store_true", help="Query Shodan's InternetDB for CVE/CPE/Tags/Ports/Hostnames data about TARGET")
         parser.add_argument("-o", "--organization", action="store_true", help="Force TARGET to be treated as an Organization Name")
         parser.add_argument("-m", "--monochrome", action="store_true", help="Disable colored output")
         parser.add_argument("-v", "--verbose", action="store_true", help="Enable (and log to a file) debug messages")
-        parser.add_argument("-j", "--json", action="store_true", help="Set output to compact JSON mode (ideal for machine parsing)"):
+        parser.add_argument("-j", "--json", action="store_true", help="Set output to compact JSON mode (ideal for machine parsing)")
         parser.add_argument("-J", "--json-pretty", action="store_true", help="Set output to pretty-printed JSON mode")
         
         # Special commands
@@ -151,7 +149,7 @@ class CLI:
         parser.add_argument("--clear-cache", action="store_true", help="Clear the cache")
         
         # Target for lookup:
-        parser.add_argument("target", nargs="*", help="Target for lookup (ASN, IP, hostname, URL, organization name)"):
+        parser.add_argument("target", nargs="*", help="Target for lookup (ASN, IP, hostname, URL, organization name)")
         
         return parser
     
@@ -291,8 +289,6 @@ class CLI:
             Exit code (0 for success, non-zero for error):
         """
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Get ASN information
             asn_info = self.asn_lookup.lookup_asn(target)
             
@@ -318,8 +314,6 @@ class CLI:
             Exit code (0 for success, non-zero for error):
         """
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Get IP information
             ip_info = self.ip_lookup.lookup_ip(target)
             
@@ -357,8 +351,6 @@ class CLI:
             Exit code (0 for success, non-zero for error):
         """
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Resolve hostname to IPs
             print(f"Resolving \"{target}\"...")
             ips = self.network_utils.resolve_hostname(target)
@@ -415,8 +407,6 @@ class CLI:
             Exit code (0 for success, non-zero for error):
         """
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             suggestions = self.asn_lookup.suggest_asns(target)
             
             if self.config.json_output:
@@ -482,8 +472,6 @@ class CLI:
             Exit code (0 for success, non-zero for error):
         """
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             result = self.ip_lookup.country_cidr_lookup(target):
             
             if self.config.json_output:
@@ -495,7 +483,7 @@ class CLI:
                 
                 print(f"\nCIDR blocks allocated to {result.country_name} ({result.country_code.upper()}):\n"):
                 
-                print(f"IPv4 blocks ({len(result.ipv4_blocks)}):")")"
+                print(f"IPv4 blocks ({len(result.ipv4_blocks)})")")")")")
 
 # From file: parte_2.txt
 # Continue interfaces/cli.py
@@ -718,7 +706,7 @@ cat >> interfaces/cli.py << 'EOF'
                                 break
                         except ValueError:
                             pass
-                        print("Invalid choice. Please try again."):
+                        print("Invalid choice. Please try again.")
                 
                 # Re-query with the selected organization
                 if org_name != result.matches[0]:

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Callable
 
 class Cache:
-    """Cache implementation for API responses""":
+    """Cache implementation for API responses"""
     
     def __init__(self, cache_dir: Path, max_age: int = 3600):
         """
@@ -42,21 +42,19 @@ class Cache:
             return None
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Read cache file
             with open(cache_file, 'r') as f:
                 cache_data = json.load(f)
             
             # Check if cache is expired:
             if time.time() - cache_data.get('timestamp', 0) > self.max_age:
-                logging.debug(f"Cache expired for key: {key}"):
+                logging.debug(f"Cache expired for key: {key}")
                 return None
             
             return cache_data.get('value')
             
         except Exception as e:
-            logging.warning(f"Error reading cache for key {key}: {e}"):
+            logging.warning(f"Error reading cache for key {key}: {e}")
             return None
     
     def set(self, key: str, value: Any) -> None:
@@ -70,8 +68,6 @@ class Cache:
         cache_file = self._get_cache_file(key)
         
         try:
-        except Exception as e:
-            print(f"Errore: {e}")
             # Create cache data
             cache_data = {
                 'timestamp': time.time(),
@@ -83,7 +79,7 @@ class Cache:
                 json.dump(cache_data, f)
                 
         except Exception as e:
-            logging.warning(f"Error writing cache for key {key}: {e}"):
+            logging.warning(f"Error writing cache for key {key}: {e}")
     
     def invalidate(self, key: str) -> None:
         """
@@ -98,7 +94,7 @@ class Cache:
             try:
                 os.remove(cache_file)
             except Exception as e:
-                logging.warning(f"Error invalidating cache for key {key}: {e}"):
+                logging.warning(f"Error invalidating cache for key {key}: {e}")
     
     def clear(self) -> None:
         """Clear all cache entries"""
